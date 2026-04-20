@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Księga Smaków — Technik Żywienia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Lato:wght@300;400;700&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
+<style>
+
+/* ═══════════════════════════════════════════
+   ROOT & RESET
+═══════════════════════════════════════════ */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --cream:    #faf6ef;
+  --cream2:   #f2ead9;
+  --cream3:   #e8ddc8;
+  --brown:    #3d2b1f;
+  --brown2:   #5c3d2e;
+  --brown3:   #8b5e3c;
+  --amber:    #c17f3b;
+  --amber2:   #e09a50;
+  --amber3:   #f0ba7a;
+  --green:    #3a6b4a;
+  --green2:   #4e8a61;
+  --red:      #8b2828;
+  --red2:     #b53a3a;
+  --text:     #2a1a10;
+  --text2:    #6b4c35;
+  --text3:    #9a7a60;
+  --border:   #d4c4a8;
+  --border2:  #c0aa88;
+  --shadow:   rgba(61,43,31,0.15);
+}
+
+body {
+  background: var(--cream);
+  color: var(--text);
+  font-family: 'Lato', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+  background-image:
+    radial-gradient(circle at 20% 20%, rgba(193,127,59,0.06) 0%, transparent 60%),
+    radial-gradient(circle at 80% 80%, rgba(58,107,74,0.05) 0%, transparent 60%);
+}
+
+/* ═══════════════════════════════════════════
+   STEAM PARTICLES
+═══════════════════════════════════════════ */
+#particles {
+  position: fixed; top:0; left:0;
+  width:100%; height:100%;
+  pointer-events:none; z-index:0; overflow:hidden;
+}
+
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0;
+  animation: steam linear infinite;
+}
+
+@keyframes steam {
+  0%   { transform: translateY(100vh) scale(0.5); opacity: 0; }
+  10%  { opacity: 0.4; }
+  90%  { opacity: 0.1; }
+  100% { transform: translateY(-5vh) scale(1.5) translateX(30px); opacity: 0; }
+}
+
+/* ═══════════════════════════════════════════
+   DECORATIVE TOP STRIPE
+═══════════════════════════════════════════ */
+.top-stripe {
+  height: 5px;
+  background: linear-gradient(90deg, var(--green), var(--amber), var(--amber2), var(--amber), var(--green));
+  position: relative; z-index: 2;
+}
+
+/* ═══════════════════════════════════════════
+   LAYOUT
+═══════════════════════════════════════════ */
+.app {
+  position: relative; z-index: 1;
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 0 24px 80px;
+}
+
+/* ═══════════════════════════════════════════
+   HEADER
+═══════════════════════════════════════════ */
+.header {
+  text-align: center;
+  padding: 40px 0 36px;
+  border-bottom: 2px solid var(--cream3);
+  margin-bottom: 36px;
+  position: relative;
+}
+
+.header-icon {
+  font-size: 44px;
+  margin-bottom: 10px;
+  filter: drop-shadow(0 2px 8px rgba(193,127,59,0.3));
+  animation: gentle-float 4s ease-in-out infinite;
+}
+
+@keyframes gentle-float {
+  0%,100% { transform: translateY(0); }
+  50%     { transform: translateY(-6px); }
+}
+
+.header-tag {
+  display: inline-block;
+  font-family: 'Lato', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  color: var(--amber);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  background: rgba(193,127,59,0.08);
+  padding: 4px 16px;
+  border-radius: 20px;
+  border: 1px solid rgba(193,127,59,0.2);
+}
+
+.header h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(28px, 6vw, 52px);
+  font-weight: 900;
+  color: var(--brown);
+  letter-spacing: 1px;
+  line-height: 1.1;
+  margin-bottom: 6px;
+}
+
+.header h1 em {
+  font-style: italic;
+  color: var(--amber);
+}
+
+.header-subtitle {
+  font-family: 'Dancing Script', cursive;
+  font-size: clamp(15px, 3vw, 20px);
+  color: var(--text3);
+  margin-top: 6px;
+}
+
+.header-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 20px;
+  color: var(--amber);
+  font-size: 18px;
+  opacity: 0.5;
+  letter-spacing: 6px;
+}
+
+.header-divider::before,
+.header-divider::after {
+  content: '';
+  width: 60px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--amber));
+}
+
+.header-divider::after {
+  background: linear-gradient(90deg, var(--amber), transparent);
+}
+
+/* ═══════════════════════════════════════════
+   PAGES
+═══════════════════════════════════════════ */
+.page { display: none; animation: pageIn 0.4s ease; }
+.page.active { display: block; }
+
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ═══════════════════════════════════════════
+   SECTION LABEL
+═══════════════════════════════════════════ */
+.section-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--text3);
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+/* ═══════════════════════════════════════════
+   DIFFICULTY GRID
+═══════════════════════════════════════════ */
+.difficulty-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 40px;
+}
+
+.diff-btn {
+  background: white;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  padding: 22px 14px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.3s cubic-bezier(.34,1.56,.64,1);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 2px 8px var(--shadow);
+}
+
+.diff-btn::after {
+  content: '';
+  position: absolute; bottom:0; left:0;
+  width: 100%; height: 3px;
+  background: var(--amber);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+}
+
+.diff-btn:hover::after { transform: scaleX(1); }
+
+.diff-btn:hover {
+  border-color: var(--amber2);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(193,127,59,0.2);
+}
+
+.diff-btn.active {
+  border-color: var(--amber);
+  background: linear-gradient(135deg, #fffbf5, #fff8ec);
+  box-shadow: 0 4px 16px rgba(193,127,59,0.25);
+}
+
+.diff-btn.active::after { transform: scaleX(1); }
+
+.diff-icon { font-size: 28px; display: block; margin-bottom: 8px; }
+
+.diff-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 14px;
+  color: var(--brown);
+  font-weight: 700;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.diff-desc {
+  font-size: 11px;
+  color: var(--text3);
+  font-style: italic;
+}
+
+/* ═══════════════════════════════════════════
+   RIDDLE LIST
+═══════════════════════════════════════════ */
+.riddle-list { display: flex; flex-direction: column; gap: 10px; }
+
+.riddle-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: all 0.25s ease;
+  box-shadow: 0 1px 4px var(--shadow);
+  position: relative;
+  overflow: hidden;
+}
+
+.riddle-card::before {
+  content: '';
+  position: absolute; left:0; top:0;
+  width: 4px; height: 100%;
+  background: var(--amber);
+  transform: scaleY(0);
+  transform-origin: bottom;
+  transition: transform 0.25s ease;
+}
+
+.riddle-card:hover::before  { transform: scaleY(1); }
+.riddle-card:hover { border-color: var(--amber2); box-shadow: 0 4px 16px rgba(193,127,59,0.15); padding-left: 24px; }
+
+.riddle-card.solved::before { background: var(--green2); transform: scaleY(1); }
+.riddle-card.solved { border-color: rgba(58,107,74,0.3); background: #f8fbf9; }
+
+.riddle-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 13px;
+  color: var(--text3);
+  min-width: 30px;
+  text-align: center;
+  font-weight: 700;
+}
+
+.riddle-preview { flex: 1; }
+.riddle-preview strong {
+  font-family: 'Playfair Display', serif;
+  font-size: 14px;
+  color: var(--brown);
+  display: block;
+  margin-bottom: 3px;
+}
+.riddle-preview span { font-size: 12px; color: var(--text3); }
+
+.riddle-arrow {
+  color: var(--text3); font-size: 18px;
+  transition: transform 0.2s, color 0.2s;
+}
+.riddle-card:hover .riddle-arrow { transform: translateX(4px); color: var(--amber); }
+
+.solved-badge {
+  font-size: 10px; font-weight: 700; letter-spacing: 1px;
+  color: var(--green2);
+  padding: 3px 10px;
+  border: 1px solid rgba(78,138,97,0.3);
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+/* ═══════════════════════════════════════════
+   RIDDLE PAGE
+═══════════════════════════════════════════ */
+.back-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--text3);
+  background: none; border: none; cursor: pointer;
+  margin-bottom: 28px; padding: 0;
+  transition: color 0.2s;
+}
+.back-btn:hover { color: var(--amber); }
+
+.riddle-header { text-align: center; margin-bottom: 28px; }
+
+.riddle-number {
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 3px; color: var(--text3);
+  text-transform: uppercase; margin-bottom: 8px;
+}
+
+.difficulty-badge {
+  display: inline-block;
+  padding: 4px 16px; border-radius: 20px;
+  font-size: 10px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.badge-easy   { background: rgba(58,107,74,0.1);  color: var(--green2); border: 1px solid rgba(58,107,74,0.25); }
+.badge-medium { background: rgba(193,127,59,0.1); color: var(--amber);  border: 1px solid rgba(193,127,59,0.25); }
+.badge-hard   { background: rgba(139,40,40,0.1);  color: var(--red2);   border: 1px solid rgba(139,40,40,0.25); }
+
+/* ─── Riddle Box ─── */
+.riddle-box {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 36px 36px 30px;
+  margin-bottom: 28px;
+  box-shadow: 0 4px 20px var(--shadow);
+  position: relative;
+  overflow: hidden;
+}
+
+.riddle-box::before {
+  content: '';
+  position: absolute; top:0; left:0; right:0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--green), var(--amber), var(--amber2));
+}
+
+.riddle-box .deco-leaf {
+  position: absolute; top: 14px; right: 18px;
+  font-size: 32px; opacity: 0.08;
+  transform: rotate(25deg);
+}
+
+.riddle-text {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px;
+  line-height: 1.85;
+  color: var(--brown);
+  text-align: center;
+  font-style: italic;
+}
+
+/* ─── Answers ─── */
+.answers-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 3px;
+  color: var(--text3); text-align: center;
+  text-transform: uppercase; margin-bottom: 14px;
+}
+
+.answers-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.answer-btn {
+  background: white;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  cursor: pointer;
+  text-align: left;
+  color: var(--text);
+  font-size: 14px;
+  font-family: 'Lato', sans-serif;
+  transition: all 0.25s ease;
+  display: flex; align-items: center; gap: 12px;
+  box-shadow: 0 1px 4px var(--shadow);
+}
+
+.answer-btn:hover:not(:disabled) {
+  border-color: var(--amber2);
+  background: linear-gradient(135deg, #fffbf5, #fff8ec);
+  color: var(--brown);
+  box-shadow: 0 4px 12px rgba(193,127,59,0.15);
+  transform: translateY(-1px);
+}
+
+.answer-btn:disabled { cursor: default; }
+
+.answer-btn.correct {
+  border-color: var(--green2); background: rgba(58,107,74,0.07); color: var(--green);
+  animation: pop-correct 0.4s ease;
+}
+.answer-btn.wrong {
+  border-color: var(--red2); background: rgba(139,40,40,0.07); color: var(--red2);
+  animation: shake 0.4s ease;
+}
+
+@keyframes pop-correct {
+  0%,100% { transform: scale(1); }
+  40%     { transform: scale(1.03); }
+}
+
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  25%     { transform: translateX(-5px); }
+  75%     { transform: translateX(5px); }
+}
+
+.answer-letter {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
+  width: 24px; height: 24px; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--cream2); color: var(--text3); flex-shrink: 0;
+  transition: all 0.25s;
+}
+
+.answer-btn:hover:not(:disabled) .answer-letter {
+  background: rgba(193,127,59,0.15); color: var(--amber);
+}
+
+/* ─── Success ─── */
+.success-msg {
+  background: linear-gradient(135deg, rgba(58,107,74,0.08), rgba(58,107,74,0.04));
+  border: 1px solid rgba(78,138,97,0.3);
+  border-radius: 12px;
+  padding: 24px 20px;
+  text-align: center; display: none;
+  animation: pageIn 0.5s ease;
+  margin-bottom: 16px;
+}
+.success-msg.show { display: block; }
+.success-msg .icon { font-size: 32px; margin-bottom: 8px; }
+.success-msg h3 {
+  font-family: 'Playfair Display', serif;
+  color: var(--green2); font-size: 18px; margin-bottom: 6px;
+}
+.success-msg p { color: var(--text2); font-style: italic; font-size: 14px; line-height: 1.6; }
+
+/* ─── Hint ─── */
+.hint-row { text-align: center; margin-bottom: 14px; }
+
+.hint-btn {
+  background: none;
+  border: 1.5px solid var(--border2);
+  color: var(--text3); font-size: 12px; font-weight: 700;
+  letter-spacing: 1px; padding: 7px 20px;
+  border-radius: 20px; cursor: pointer;
+  transition: all 0.2s;
+  text-transform: uppercase;
+}
+.hint-btn:hover { border-color: var(--amber); color: var(--amber); }
+
+.hint-box {
+  background: rgba(193,127,59,0.07);
+  border: 1px solid rgba(193,127,59,0.2);
+  border-radius: 10px;
+  padding: 14px 18px;
+  font-style: italic; color: var(--text2); font-size: 14px;
+  text-align: center; margin-bottom: 16px; display: none;
+  animation: pageIn 0.3s ease;
+}
+.hint-box.show { display: block; }
+
+/* ─── Navigation ─── */
+.nav-row {
+  display: flex; justify-content: space-between;
+  align-items: center; margin-top: 20px;
+}
+
+.nav-btn {
+  background: none; border: 1.5px solid var(--border2);
+  color: var(--text3); font-size: 11px; font-weight: 700;
+  letter-spacing: 1.5px; padding: 9px 22px;
+  border-radius: 20px; cursor: pointer;
+  transition: all 0.2s; text-transform: uppercase;
+}
+.nav-btn:hover:not(:disabled) { border-color: var(--amber); color: var(--amber); }
+.nav-btn:disabled { opacity: 0.3; cursor: default; }
+
+.progress-text { font-size: 12px; color: var(--text3); font-weight: 700; }
+
+/* ═══════════════════════════════════════════
+   FOOTER DECORATION
+═══════════════════════════════════════════ */
+.footer-deco {
+  text-align: center;
+  margin-top: 60px;
+  color: var(--text3);
+  font-size: 20px;
+  letter-spacing: 8px;
+  opacity: 0.4;
+}
+
+/* ═══════════════════════════════════════════
+   SCROLLBAR
+═══════════════════════════════════════════ */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--cream2); }
+::-webkit-scrollbar-thumb { background: var(--amber3); border-radius: 3px; }
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════ */
+@media (max-width: 480px) {
+  .difficulty-grid { grid-template-columns: 1fr; }
+  .answers-grid    { grid-template-columns: 1fr; }
+  .riddle-box      { padding: 24px 18px; }
+  .header          { padding: 24px 0 24px; }
+}
+
+</style>
+</head>
+<body>
+
+<div class="top-stripe"></div>
+<div id="particles"></div>
+
+<div class="app">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-icon">🍽️</div>
+    <div class="header-tag">Technik Żywienia i Usług Gastronomicznych</div>
+    <h1>Księga <em>Smaków</em></h1>
+    <div class="header-subtitle">Sprawdź swoją wiedzę kulinarną</div>
+    <div class="header-divider">✦</div>
+  </div>
+
+  <!-- HOME PAGE -->
+  <div id="page-home" class="page active">
+    <div class="section-label">Wybierz poziom trudności</div>
+    <div class="difficulty-grid">
+      <div class="diff-btn easy active" onclick="selectDifficulty('easy')">
+        <span class="diff-icon">🌿</span>
+        <span class="diff-name">Łatwy</span>
+        <span class="diff-desc">Kuchnia podstaw</span>
+      </div>
+      <div class="diff-btn medium" onclick="selectDifficulty('medium')">
+        <span class="diff-icon">🔪</span>
+        <span class="diff-name">Średni</span>
+        <span class="diff-desc">Techniki mistrza</span>
+      </div>
+      <div class="diff-btn hard" onclick="selectDifficulty('hard')">
+        <span class="diff-icon">👨‍🍳</span>
+        <span class="diff-name">Trudny</span>
+        <span class="diff-desc">Wiedza szefa</span>
+      </div>
+    </div>
+    <div id="riddle-list-container"></div>
+    <div class="footer-deco">✦ ✦ ✦</div>
+  </div>
+
+  <!-- RIDDLE PAGE -->
+  <div id="page-riddle" class="page">
+    <button class="back-btn" onclick="goHome()">← Powrót</button>
+    <div class="riddle-header">
+      <div class="riddle-number" id="riddle-num-label"></div>
+      <div id="difficulty-badge" class="difficulty-badge"></div>
+    </div>
+
+    <div class="riddle-box">
+      <div class="deco-leaf">🍃</div>
+      <div class="riddle-text" id="riddle-text"></div>
+    </div>
+
+    <div class="answers-label">Wybierz odpowiedź</div>
+    <div class="answers-grid" id="answers-grid"></div>
+
+    <div class="hint-row">
+      <button class="hint-btn" onclick="showHint()">🔍 Wskazówka</button>
+    </div>
+    <div class="hint-box" id="hint-box"></div>
+
+    <div class="success-msg" id="success-msg">
+      <div class="icon">✅</div>
+      <h3>Brawo!</h3>
+      <p id="success-text"></p>
+    </div>
+
+    <div class="nav-row">
+      <button class="nav-btn" id="prev-btn" onclick="navigate(-1)">← Poprzednia</button>
+      <span class="progress-text" id="progress-text"></span>
+      <button class="nav-btn" id="next-btn" onclick="navigate(1)">Następna →</button>
+    </div>
+  </div>
+
+</div>
+
+<script src="riddles_gastro.js"></script>
+<script>
+// ── State ──────────────────────────────────
+let currentDiff = 'easy';
+let currentIdx  = 0;
+let solved = { easy: new Set(), medium: new Set(), hard: new Set() };
+
+// ── Particles ─────────────────────────────
+(function createParticles() {
+  const container = document.getElementById('particles');
+  const emojis = ['🌿','✨','🍃'];
+  for (let i = 0; i < 14; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left              = Math.random() * 100 + '%';
+    p.style.animationDuration = (10 + Math.random() * 15) + 's';
+    p.style.animationDelay    = (Math.random() * 12) + 's';
+    const size = (2 + Math.random() * 3) + 'px';
+    p.style.width = p.style.height = size;
+    const colors = ['rgba(193,127,59,0.4)','rgba(58,107,74,0.3)','rgba(224,154,80,0.35)'];
+    p.style.background = colors[Math.floor(Math.random() * colors.length)];
+    container.appendChild(p);
+  }
+})();
+
+// ── Difficulty ─────────────────────────────
+function selectDifficulty(diff) {
+  currentDiff = diff;
+  document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector('.diff-btn.' + diff).classList.add('active');
+  renderRiddleList();
+}
+
+// ── Riddle List ────────────────────────────
+function renderRiddleList() {
+  const riddles = riddlesData[currentDiff];
+  let html = '<div class="riddle-list">';
+  riddles.forEach((r, i) => {
+    const isSolved = solved[currentDiff].has(i);
+    html += `
+      <div class="riddle-card${isSolved ? ' solved' : ''}" onclick="openRiddle(${i})">
+        <span class="riddle-num">0${i + 1}</span>
+        <div class="riddle-preview">
+          <strong>${r.title}</strong>
+          <span>${r.text.substring(0, 68)}…</span>
+        </div>
+        ${isSolved
+          ? '<span class="solved-badge">✓ Rozwiązana</span>'
+          : '<span class="riddle-arrow">›</span>'
+        }
+      </div>`;
+  });
+  html += '</div>';
+  document.getElementById('riddle-list-container').innerHTML = html;
+}
+
+// ── Open Riddle ────────────────────────────
+function openRiddle(idx) {
+  currentIdx = idx;
+  renderRiddlePage();
+  document.getElementById('page-home').classList.remove('active');
+  document.getElementById('page-riddle').classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// ── Render Riddle Page ─────────────────────
+function renderRiddlePage() {
+  const riddles    = riddlesData[currentDiff];
+  const r          = riddles[currentIdx];
+  const letters    = ['A', 'B', 'C', 'D'];
+  const diffLabels = { easy: 'Łatwy', medium: 'Średni', hard: 'Trudny' };
+  const diffClass  = { easy: 'badge-easy', medium: 'badge-medium', hard: 'badge-hard' };
+
+  document.getElementById('riddle-num-label').textContent =
+    `Zagadka ${currentIdx + 1} z ${riddles.length}`;
+
+  const badge = document.getElementById('difficulty-badge');
+  badge.textContent = diffLabels[currentDiff];
+  badge.className   = 'difficulty-badge ' + diffClass[currentDiff];
+
+  document.getElementById('riddle-text').textContent = r.text;
+
+  let answersHtml = '';
+  r.answers.forEach((a, i) => {
+    answersHtml += `
+      <button class="answer-btn" onclick="checkAnswer(${i})" id="ans-${i}">
+        <span class="answer-letter">${letters[i]}</span>${a}
+      </button>`;
+  });
+  document.getElementById('answers-grid').innerHTML = answersHtml;
+
+  const hintBox = document.getElementById('hint-box');
+  hintBox.textContent = '💡 ' + r.hint;
+  hintBox.classList.remove('show');
+  document.getElementById('success-msg').classList.remove('show');
+
+  document.getElementById('progress-text').textContent =
+    `${currentIdx + 1} / ${riddles.length}`;
+  document.getElementById('prev-btn').disabled = currentIdx === 0;
+  document.getElementById('next-btn').disabled = currentIdx === riddles.length - 1;
+
+  if (solved[currentDiff].has(currentIdx)) markSolved();
+}
+
+// ── Check Answer ───────────────────────────
+function checkAnswer(idx) {
+  const r    = riddlesData[currentDiff][currentIdx];
+  const btns = document.querySelectorAll('.answer-btn');
+  btns.forEach(b => b.disabled = true);
+
+  if (idx === r.correct) {
+    btns[idx].classList.add('correct');
+    solved[currentDiff].add(currentIdx);
+    document.getElementById('success-text').textContent = r.success;
+    setTimeout(() => document.getElementById('success-msg').classList.add('show'), 300);
+  } else {
+    btns[idx].classList.add('wrong');
+    btns[r.correct].classList.add('correct');
+    setTimeout(() => {
+      btns[idx].classList.remove('wrong');
+      btns.forEach(b => b.disabled = false);
+    }, 900);
+  }
+}
+
+function markSolved() {
+  const r    = riddlesData[currentDiff][currentIdx];
+  const btns = document.querySelectorAll('.answer-btn');
+  btns.forEach((b, i) => { b.disabled = true; if (i === r.correct) b.classList.add('correct'); });
+  document.getElementById('success-text').textContent = r.success;
+  document.getElementById('success-msg').classList.add('show');
+}
+
+function showHint() { document.getElementById('hint-box').classList.toggle('show'); }
+
+function navigate(dir) { currentIdx += dir; renderRiddlePage(); window.scrollTo(0, 0); }
+
+function goHome() {
+  document.getElementById('page-riddle').classList.remove('active');
+  document.getElementById('page-home').classList.add('active');
+  renderRiddleList();
+}
+
+// ── Init ───────────────────────────────────
+selectDifficulty('easy');
+</script>
+</body>
+</html>
